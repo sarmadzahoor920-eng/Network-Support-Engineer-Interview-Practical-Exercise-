@@ -1,0 +1,27 @@
+- name: Configure RADIUS on Mikrotik CHR
+  hosts: mikrotik
+  gather_facts: no
+
+
+  vars:
+    radius_server: 35.227.71.209
+    radius_secret: testing123
+
+
+  tasks:
+    - name: Add RADIUS client
+      community.routeros.command:
+        commands:
+          - / radius add address={{ radius_server }} secret={{ radius_secret }} service=hotspot
+
+
+    - name: Verify RADIUS configuration
+      community.routeros.command:
+        commands:
+          - /radius print
+      register: radius_output
+
+
+    - name: Show RADIUS output
+      debug:
+        var: radius_output.stdout_lines
